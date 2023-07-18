@@ -76,6 +76,10 @@ installations() {
 }
 
 speedtestinstall() {
+  curl -fsSL https://get.docker.com | sh
+}
+
+dockerinstall() {
   curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash
   apt-get install speedtest
 }
@@ -91,7 +95,7 @@ swap_maker() {
   SWAP_SIZE=2G
 
   # Default Swap Path
-  SWAP_PATH="/swapfile"
+  SWAP_PATH="/swapfile1"
 
   # Make Swap
   fallocate -l $SWAP_SIZE $SWAP_PATH                           # Allocate size
@@ -306,8 +310,11 @@ sleep 0.5
 installations
 sleep 0.5
 
-#speedtestinstall
-#sleep 0.5
+speedtestinstall
+sleep 0.5
+
+dockerinstall
+sleep 0.5
 
 enable_packages
 sleep 0.5
