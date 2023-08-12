@@ -344,6 +344,19 @@ if [ "$1" = "--ufw" ]; then
     echo "OK, working with UFW"
     block_icmp
     ufw_optimizations
+    exit
+fi
+
+if [ "$1" = "--speedtest" ]; then
+    echo "OK, installing SpeedtestCLI"
+    speedtestinstall
+    exit
+fi
+
+if [ "$1" = "--docker" ]; then
+    echo "OK, installing Docker"
+    dockerinstall
+    exit
 fi
 
 # RUN BABY, RUN
@@ -392,14 +405,17 @@ sleep 0.5
 limits_optimizations
 sleep 1
 
+block_icmp
+sleep 0.5
+
 ufw_optimizations
 sleep 0.5
 
 # Outro
 echo
 echo $(tput setaf 2)=========================$(tput sgr0)
-echo "$(tput setaf 2)----- تمام شد سرورت کامل بهینه شد $(tput sgr0)"
-echo "$(tput setaf 3)----- reboot برای بهبود عملکرد یک بار ریبوت کن کافیه تایپ کنی  $(tput sgr0)"
+echo "$(tput setaf 2)----- Server optimization complete  $(tput sgr0)"
+echo "$(tput setaf 3)----- For improved performance, type 'reboot' $(tput sgr0)"
 echo $(tput setaf 2)=========================$(tput sgr0)
 sleep 5
 echo
