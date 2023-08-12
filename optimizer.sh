@@ -327,6 +327,7 @@ if [ "$1" = "--blockicmp" ]; then
     block_icmp
 fi
 
+echo "Arg1 is $1"
 
 # RUN BABY, RUN
 check_if_running_as_root
