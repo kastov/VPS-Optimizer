@@ -321,6 +321,11 @@ ufw_optimizations() {
   echo
 }
 
+
+if [ "$1" = "blockicmp" ]; then
+    echo "OK"
+    block_icmp
+fi
 # RUN BABY, RUN
 check_if_running_as_root
 sleep 0.5
@@ -379,7 +384,3 @@ echo $(tput setaf 2)=========================$(tput sgr0)
 sleep 5
 echo
 echo
-
-if [ "$1" = "--blockicmp" ]; then
-    block_icmp
-fi
