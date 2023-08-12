@@ -277,23 +277,26 @@ limits_optimizations() {
 block_icmp(){
   sed -i '/-A ufw-before-input -p icmp/d' $BEFORE_RULES
   sed -i '/-A ufw-before-forward -p icmp/d' $BEFORE_RULES
+
   if ! grep -q "icmp --icmp-type destination-unreachable -j DROP" /etc/ufw/before.rules; then
     # Добавляем правила ICMP в цепочку "before" для входящих пакетов
-    sed -i '/ufw-before-input -p icmp --icmp-type echo-request -j DROP/i -A ufw-before-input -p icmp --icmp-type destination-unreachable -j DROP' /etc/ufw/before.rules
-    sed -i '/ufw-before-input -p icmp --icmp-type destination-unreachable -j DROP/i -A ufw-before-input -p icmp --icmp-type source-quench -j DROP' /etc/ufw/before.rules
-    sed -i '/ufw-before-input -p icmp --icmp-type source-quench -j DROP/i -A ufw-before-input -p icmp --icmp-type time-exceeded -j DROP' /etc/ufw/before.rules
-    sed -i '/ufw-before-input -p icmp --icmp-type time-exceeded -j DROP/i -A ufw-before-input -p icmp --icmp-type parameter-problem -j DROP' /etc/ufw/before.rules
-    sed -i '/ufw-before-input -p icmp --icmp-type parameter-problem -j DROP/i ' /etc/ufw/before.rules
+    sed -i '/ufw-before-input -p icmp --icmp-type echo-request -j DROP/i \    -A ufw-before-input -p icmp --icmp-type destination-unreachable -j DROP' /etc/ufw/before.rules
+    sed -i '/ufw-before-input -p icmp --icmp-type destination-unreachable -j DROP/i \    -A ufw-before-input -p icmp --icmp-type source-quench -j DROP' /etc/ufw/before.rules
+    sed -i '/ufw-before-input -p icmp --icmp-type source-quench -j DROP/i \    -A ufw-before-input -p icmp --icmp-type time-exceeded -j DROP' /etc/ufw/before.rules
+    sed -i '/ufw-before-input -p icmp --icmp-type time-exceeded -j DROP/i \    -A ufw-before-input -p icmp --icmp-type parameter-problem -j DROP' /etc/ufw/before.rules
+    sed -i '/ufw-before-input -p icmp --icmp-type parameter-problem -j DROP/i\' /etc/ufw/before.rules
 fi
 
 if ! grep -q "icmp --icmp-type destination-unreachable -j DROP" /etc/ufw/before.rules; then
     # Добавляем правила ICMP в цепочку "before" для пересылаемых пакетов
-    sed -i '/ufw-before-forward -p icmp --icmp-type echo-request -j DROP/i -A ufw-before-forward -p icmp --icmp-type destination-unreachable -j DROP' /etc/ufw/before.rules
-    sed -i '/ufw-before-forward -p icmp --icmp-type destination-unreachable -j DROP/i -A ufw-before-forward -p icmp --icmp-type source-quench -j DROP' /etc/ufw/before.rules
-    sed -i '/ufw-before-forward -p icmp --icmp-type source-quench -j DROP/i -A ufw-before-forward -p icmp --icmp-type time-exceeded -j DROP' /etc/ufw/before.rules
-    sed -i '/ufw-before-forward -p icmp --icmp-type time-exceeded -j DROP/i -A ufw-before-forward -p icmp --icmp-type parameter-problem -j DROP' /etc/ufw/before.rules
-    sed -i '/ufw-before-forward -p icmp --icmp-type parameter-problem -j DROP/i ' /etc/ufw/before.rules
+    sed -i '/ufw-before-forward -p icmp --icmp-type echo-request -j DROP/i \    -A ufw-before-forward -p icmp --icmp-type destination-unreachable -j DROP' /etc/ufw/before.rules
+    sed -i '/ufw-before-forward -p icmp --icmp-type destination-unreachable -j DROP/i \    -A ufw-before-forward -p icmp --icmp-type source-quench -j DROP' /etc/ufw/before.rules
+    sed -i '/ufw-before-forward -p icmp --icmp-type source-quench -j DROP/i \    -A ufw-before-forward -p icmp --icmp-type time-exceeded -j DROP' /etc/ufw/before.rules
+    sed -i '/ufw-before-forward -p icmp --icmp-type time-exceeded -j DROP/i \    -A ufw-before-forward -p icmp --icmp-type parameter-problem -j DROP' /etc/ufw/before.rules
+    sed -i '/ufw-before-forward -p icmp --icmp-type parameter-problem -j DROP/i\' /etc/ufw/before.rules
 fi
+
+
 }
 ## UFW Optimizations
 ufw_optimizations() {
