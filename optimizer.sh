@@ -17,12 +17,13 @@ LIM_PATH="/etc/security/limits.conf"
 PROF_PATH="/etc/profile"
 SSH_PATH="/etc/ssh/sshd_config"
 DNS_PATH="/etc/resolv.conf"
+BEFORE_RULES="/etc/ufw/before.rules"
 
 # Check Root User
 check_if_running_as_root() {
   # If you want to run as another user, please modify $EUID to be owned by this user
   if [[ "$EUID" -ne '0' ]]; then
-    echo "$(tput setaf 1)Error: شما باید این اسکریپت را به صورت روت اجرا کنید!$(tput sgr0)"
+    echo "$(tput setaf 1)Error: root required!$(tput sgr0)"
     exit 1
   fi
 }
@@ -76,12 +77,12 @@ installations() {
 }
 
 speedtestinstall() {
-  curl -fsSL https://get.docker.com | sh
+  curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash
+  apt-get install speedtest
 }
 
 dockerinstall() {
-  curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash
-  apt-get install speedtest
+  curl -fsSL https://get.docker.com | sh
 }
 
 # Enable packages at server boot
@@ -272,6 +273,24 @@ limits_optimizations() {
   echo
 }
 
+## Block ICMP requests
+block_icmp(){
+  sed -i '/-A ufw-before-input -p icmp/d' $BEFORE_RULES
+  sed -i '/-A ufw-before-forward -p icmp/d' $BEFORE_RULES
+  echo "# ok icmp codes for INPUT"
+  iptables -A ufw-before-input -p icmp --icmp-type destination-unreachable -j DROP
+  iptables -A ufw-before-input -p icmp --icmp-type source-quench -j DROP
+  iptables -A ufw-before-input -p icmp --icmp-type time-exceeded -j DROP
+  iptables -A ufw-before-input -p icmp --icmp-type parameter-problem -j DROP
+  iptables -A ufw-before-input -p icmp --icmp-type echo-request -j DROP
+
+  echo "# ok icmp code for FORWARD"
+  iptables -A ufw-before-forward -p icmp --icmp-type destination-unreachable -j DROP
+  iptables -A ufw-before-forward -p icmp --icmp-type source-quench -j DROP
+  iptables -A ufw-before-forward -p icmp --icmp-type time-exceeded -j DROP
+  iptables -A ufw-before-forward -p icmp --icmp-type parameter-problem -j DROP
+  iptables -A ufw-before-forward -p icmp --icmp-type echo-request -j DROP
+}
 ## UFW Optimizations
 ufw_optimizations() {
   # Open default ports.
@@ -283,6 +302,14 @@ ufw_optimizations() {
   ufw allow 80/udp
   ufw allow 443
   ufw allow 443/udp
+  ufw allow 62050
+  ufw allow 62051
+  ufw allow 19999
+  ufw allow 2083
+  ufw allow 2053
+  ufw allow 2087
+  ufw allow 2096
+  ufw allow 8443
   sleep 0.5
   # Change the UFW config to use System config.
   sed -i 's+/etc/ufw/sysctl.conf+/etc/sysctl.conf+gI' /etc/default/ufw
@@ -352,3 +379,7 @@ echo $(tput setaf 2)=========================$(tput sgr0)
 sleep 5
 echo
 echo
+
+if [ "$1" = "--blockicmp" ]; then
+    block_icmp
+fi
