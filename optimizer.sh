@@ -277,7 +277,9 @@ limits_optimizations() {
 block_icmp(){
   sed -i '/-A ufw-before-input -p icmp/d' $BEFORE_RULES
   sed -i '/-A ufw-before-forward -p icmp/d' $BEFORE_RULES
+  sed -i '/COMMIT/d' $BEFORE_RULES
   RULES=$(cat <<EOF
+
 # ok icmp codes for INPUT 
 -A ufw-before-input -p icmp --icmp-type destination-unreachable -j DROP
 -A ufw-before-input -p icmp --icmp-type source-quench -j DROP  
@@ -291,6 +293,8 @@ block_icmp(){
 -A ufw-before-input -p icmp --icmp-type time-exceeded -j DROP 
 -A ufw-before-input -p icmp --icmp-type parameter-problem -j DROP
 -A ufw-before-input -p icmp --icmp-type echo-request -j DROP
+
+COMMIT
 EOF
 )
 
