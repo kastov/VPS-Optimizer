@@ -301,6 +301,8 @@ EOF
   echo "$RULES" >> /etc/ufw/before.rules
 
   ufw reload
+  ufw disable
+  ufw enable
 
 
 }
@@ -329,18 +331,20 @@ ufw_optimizations() {
   # Reload
   ufw reload
   ufw status
+  ufw disable
+  ufw enable
+  ufw status
   echo
   echo $(tput setaf 2)Firewall Optimized.$(tput sgr0)
   echo
 }
 
 
-if [ "$1" = "--blockicmp" ]; then
-    echo "OK"
+if [ "$1" = "--ufw" ]; then
+    echo "OK, working with UFW"
     block_icmp
+    ufw_optimizations
 fi
-
-echo "Arg1 is $1"
 
 # RUN BABY, RUN
 check_if_running_as_root
