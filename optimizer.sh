@@ -277,19 +277,18 @@ limits_optimizations() {
 block_icmp(){
   sed -i '/-A ufw-before-input -p icmp/d' $BEFORE_RULES
   sed -i '/-A ufw-before-forward -p icmp/d' $BEFORE_RULES
-  echo "# ok icmp codes for INPUT"
-  iptables -A ufw-before-input -p icmp --icmp-type destination-unreachable -j DROP
-  iptables -A ufw-before-input -p icmp --icmp-type source-quench -j DROP
-  iptables -A ufw-before-input -p icmp --icmp-type time-exceeded -j DROP
-  iptables -A ufw-before-input -p icmp --icmp-type parameter-problem -j DROP
-  iptables -A ufw-before-input -p icmp --icmp-type echo-request -j DROP
+  ufw insert 1 reject proto icmp icmp-type destination-unreachable
+  ufw insert 1 reject proto icmp icmp-type source-quench
+  ufw insert 1 reject proto icmp icmp-type time-exceeded
+  ufw insert 1 reject proto icmp icmp-type parameter-problem
+  ufw insert 1 reject proto icmp icmp-type echo-request
 
   echo "# ok icmp code for FORWARD"
-  iptables -A ufw-before-forward -p icmp --icmp-type destination-unreachable -j DROP
-  iptables -A ufw-before-forward -p icmp --icmp-type source-quench -j DROP
-  iptables -A ufw-before-forward -p icmp --icmp-type time-exceeded -j DROP
-  iptables -A ufw-before-forward -p icmp --icmp-type parameter-problem -j DROP
-  iptables -A ufw-before-forward -p icmp --icmp-type echo-request -j DROP
+  ufw insert 1 reject in on eth0 proto icmp icmp-type destination-unreachable
+  ufw insert 1 reject in on eth0 proto icmp icmp-type source-quench
+  ufw insert 1 reject in on eth0 proto icmp icmp-type time-exceeded
+  ufw insert 1 reject in on eth0 proto icmp icmp-type parameter-problem
+  ufw insert 1 reject in on eth0 proto icmp icmp-type echo-request
 }
 ## UFW Optimizations
 ufw_optimizations() {
